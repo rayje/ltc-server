@@ -33,6 +33,6 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/", requestHandler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
 	fmt.Println("Running on port 8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
