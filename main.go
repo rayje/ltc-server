@@ -29,10 +29,10 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprint(w, content)
-	fmt.Println("time: ", endTime.Sub(startTime))
 }
 
 func main() {
 	http.HandleFunc("/", requestHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
+	fmt.Println("Running on port 8080")
 }
