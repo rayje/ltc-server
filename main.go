@@ -8,11 +8,9 @@ import (
 )
 
 func requestHandler(w http.ResponseWriter, r *http.Request) {
-	reqType := r.URL.Path[1:]
-
 	startTime := time.Now()
+	reqType := r.URL.Path[1:]
 	content, err := getContent(reqType)
-	endTime := time.Now()
 
 	// Use 500 for errors
 	if err != nil {
@@ -21,13 +19,13 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Add("ReadTime", endTime.Sub(startTime).String())
-
 	// Echo Headers
 	for k, v := range r.Header {
 		w.Header().Add("X-" + k, v[0])
 	}
 
+	endTime := time.Now()
+	w.Header().Add("ReadTime", endTime.Sub(startTime).String())
 	fmt.Fprint(w, content)
 }
 
