@@ -9,23 +9,30 @@ import (
 
 func requestHandler(w http.ResponseWriter, r *http.Request) {
 	startTime := time.Now()
+
+	var content string
+	var err error
+
 	reqType := r.URL.Path[1:]
-	content, err := getContent(reqType)
 
-	// Use 500 for errors
-	if err != nil {
-		fmt.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if reqType != "status" {
+		content, err = getContent(reqType)
+		// Use 500 for errors
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Echo Headers
+		for k, v := range r.Header {
+			w.Header().Add("X-" + k, v[0])
+		}
+
+		endTime := time.Now()
+		w.Header().Add("ReadTime", endTime.Sub(startTime).String())
 	}
 
-	// Echo Headers
-	for k, v := range r.Header {
-		w.Header().Add("X-" + k, v[0])
-	}
-
-	endTime := time.Now()
-	w.Header().Add("ReadTime", endTime.Sub(startTime).String())
 	fmt.Fprint(w, content)
 }
 
