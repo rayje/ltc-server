@@ -9,6 +9,7 @@ import (
 )
 
 var ServerStatus int = 200
+var config Config
 
 func requestHandler(w http.ResponseWriter, r *http.Request) {
 	startTime := time.Now()
@@ -31,11 +32,13 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	endTime := time.Now()
+	w.Header().Add("ServerName", config.Name)
 	w.Header().Add("ReadTime", endTime.Sub(startTime).String())
 	fmt.Fprint(w, content)
 }
 
 func statusRequestHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("ServerName", config.Name)
 	w.WriteHeader(ServerStatus)
 }
 
@@ -52,13 +55,16 @@ func failureRequestHandler(w http.ResponseWriter, r *http.Request) {
 		ServerStatus = int(v)
 	}
 
+	w.Header().Add("ServerName", config.Name)
 	w.WriteHeader(http.StatusOK)
 }
 
 func main() {
+	config = getConfig()
+
 	http.HandleFunc("/status", statusRequestHandler)
 	http.HandleFunc("/failure", failureRequestHandler)
 	http.HandleFunc("/", requestHandler)
-	fmt.Println("Running on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	fmt.Println("Running on port " + config.Port)
+	log.Fatal(http.ListenAndServe(":" + config.Port, nil))
 }
