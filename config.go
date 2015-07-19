@@ -9,7 +9,7 @@ import (
 )
 
 type Config struct {
-	Port			string         `json:"port"`
+	Port		string         `json:"port"`
 	Name            string         `json:"name"`
 }
 
